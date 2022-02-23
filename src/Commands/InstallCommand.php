@@ -32,17 +32,10 @@ class InstallCommand extends Command
         foreach ($services as $name => &$service) {
             Arr::forget($service, 'ports');
 
-            if (in_array($name, ['laravel.test', 'meilisearch', 'minio', 'mailhog'])) {
+            if ($name === 'laravel.test') {
+                Arr::set($service, 'ports', [':80']);
                 Arr::set($service, 'networks', $this->getNetworks($service));
-
-                $fqdn = match ($name) {
-                    'laravel.test' => $domain,
-                    'meilisearch' => "meilisearch.$domain",
-                    'minio' => "minio.$domain",
-                    'mailhog' => "mailhog.$domain",
-                };
-
-                Arr::set($service, 'labels', $this->getLabels($fqdn));
+                Arr::set($service, 'labels', $this->getLabels($domain));
             }
         }
 

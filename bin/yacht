@@ -34,7 +34,15 @@ if [[ -z "$MACHINE" ]]; then
 fi
 
 if [[ $# -gt 0 ]]; then
-  if [[ "$1" == "add" ]]; then
+  if [[ "$1" == "start" ]]; then
+    shift 1
+
+    docker-compose -f "${COMPOSE_FILE}" up -d "$@"
+  elif [[ "$1" == "stop" ]]; then
+    shift 1
+
+    docker-compose -f "${COMPOSE_FILE}" stop "$@"
+  elif [[ "$1" == "add" ]]; then
     shift 1
     if [[ $# -gt 0 ]]; then
       ADD_DIR="$1"
@@ -64,6 +72,8 @@ if [[ $# -gt 0 ]]; then
 else
   echo -e "${GREEN}Available commands:${NC}"
   echo
+  echo -e "\tstart\t\tStart Traefik"
+  echo -e "\tstop\t\tStop Traefik"
   echo -e "\tadd [<path>]\tAdd a directory as Laravel Sail source"
   echo
   echo "Commands that are not defined, will be passed to \"docker-compose\"."
