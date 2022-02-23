@@ -30,12 +30,13 @@ class InstallCommand extends Command
         $services = Arr::get($yaml, 'services', []);
 
         foreach ($services as $name => &$service) {
-            Arr::forget($service, 'ports');
 
             if ($name === 'laravel.test') {
                 Arr::set($service, 'ports', [':80']);
                 Arr::set($service, 'networks', $this->getNetworks($service));
                 Arr::set($service, 'labels', $this->getLabels($domain));
+            } else {
+                Arr::forget($service, 'ports');
             }
         }
 
