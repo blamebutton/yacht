@@ -21,6 +21,7 @@ if ! [[ -x "$(command -v docker-compose)" ]]; then
 fi
 
 UNAME="$(uname -s)"
+DOCKER_NETWORK='yacht-proxy'
 
 case "$UNAME" in
 Linux*) MACHINE=linux ;;
@@ -36,6 +37,10 @@ fi
 if [[ $# -gt 0 ]]; then
   if [[ "$1" == "start" ]]; then
     shift 1
+
+    if ! docker network ls --format '{{.Name}}' | grep -q "${DOCKER_NETWORK}"; then
+      docker network create "${DOCKER_NETWORK}"
+    fi
 
     docker-compose -f "${COMPOSE_FILE}" up -d "$@"
   elif [[ "$1" == "stop" ]]; then
