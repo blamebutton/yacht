@@ -1,0 +1,44 @@
+{
+  "name": "blamebutton/yacht",
+  "description": "Library that integrates Traefik with Laravel",
+  "keywords": [
+    "laravel",
+    "sail",
+    "docker",
+    "traefik"
+  ],
+  "homepage": "https://github.com/blamebutton/yacht",
+  "type": "project",
+  "license": "MIT",
+  "bin": "bin/yacht",
+  "authors": [
+    {
+      "name": "Bram Ceulemans",
+      "email": "bram@ceulemans.dev",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^8.0.2",
+    "illuminate/support": "^9.0",
+    "laravel/sail": "^1.13",
+    "symfony/yaml": "^6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Blamebutton\\Yacht\\": "src/"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Blamebutton\\Yacht\\YachtServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

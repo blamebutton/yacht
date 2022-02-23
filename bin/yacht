@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+BASE_DIR="$(dirname "$0")"
+COMPOSE_FILE="${BASE_DIR}/../docker/docker-compose.yml"
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+function log_info() {
+  echo -e "${GREEN}INFO:\t$1"
+}
+
+function log_error() {
+  echo -e "${RED}ERROR:\t$1"
+}
+
+if ! [[ -x "$(command -v docker-compose)" ]]; then
+  shopt -s expand_aliases
+  alias docker-compose="docker compose"
+fi
+
+UNAME="$(uname -s)"
+
+case "$UNAME" in
+Linux*) MACHINE=linux ;;
+Darwin*) MACHINE=mac ;;
+*) MACHINE='' ;;
+esac
+
+if [[ -z "$MACHINE" ]]; then
+  echo "Unsupported operating system [$(uname -s)]. Yacht supports Linux, macOS and Windows (WSL2)."
+  exit 1
+fi
+
+if [[ $# -gt 0 ]]; then
+  if [[ "$1" == "add" ]]; then
+    shift 1
+    if [[ $# -gt 0 ]]; then
+      ADD_DIR="$1"
+    else
+      ADD_DIR="$(pwd)"
+    fi
+
+    if ! [[ -d "${ADD_DIR}" ]]; then
+      log_error "<path> does not exist"
+      exit 1
+    fi
+
+    if ! [[ -f "${ADD_DIR}/artisan" ]]; then
+      log_error "file \"artisan\" not found in directory \"${ADD_DIR}\""
+      exit 1
+    fi
+
+    ARTISAN="${ADD_DIR}/artisan"
+    APP_VERSION="$(php "${ARTISAN}" --version)"
+
+    log_info "${APP_VERSION} found in directory \"${ADD_DIR}\""
+
+    php "${ARTISAN}" yacht:install
+  else
+    docker-compose -f "${COMPOSE_FILE}" "$@"
+  fi
+else
+  echo -e "${GREEN}Available commands:${NC}"
+  echo
+  echo -e "\tadd [<path>]\tAdd a directory as Laravel Sail source"
+  echo
+  echo "Commands that are not defined, will be passed to \"docker-compose\"."
+fi
