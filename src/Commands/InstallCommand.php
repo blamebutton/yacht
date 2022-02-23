@@ -24,13 +24,13 @@ class InstallCommand extends Command
         $yaml = Yaml::parseFile($path);
 
         Arr::set($yaml, 'networks.yacht', [
-            'name' => 'yacht-proxy'
+            'name' => 'yacht-proxy',
+            'external' => true,
         ]);
 
         $services = Arr::get($yaml, 'services', []);
 
         foreach ($services as $name => &$service) {
-
             if ($name === 'laravel.test') {
                 Arr::set($service, 'ports', [':80']);
                 Arr::set($service, 'networks', $this->getNetworks($service));
