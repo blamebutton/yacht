@@ -32,9 +32,17 @@ class InstallCommand extends Command
         foreach ($services as $name => &$service) {
             Arr::forget($service, 'ports');
 
-            if ($name === 'laravel.test') {
-                Arr::set($service, 'labels', $this->getLabels($domain));
+            if (in_array($name, ['laravel.test', 'meilisearch', 'minio', 'mailhog'])) {
                 Arr::set($service, 'networks', $this->getNetworks($service));
+
+                $fqdn = match ($name) {
+                    'laravel.test' => $domain,
+                    'meilisearch' => "meilisearch.$domain",
+                    'minio' => "minio.$domain",
+                    'mailhog' => "mailhog.$domain",
+                };
+
+                Arr::set($service, 'labels', $this->getLabels($fqdn));
             }
         }
 
@@ -69,8 +77,10 @@ class InstallCommand extends Command
 
     public function getLabels(string $domain): array
     {
+        $slug = Str::slug($domain);
+
         return [
-            sprintf('traefik.http.routers.%1$s.rule=Host(`%1$s.localhost`)', $domain),
+            sprintf('traefik.http.routers.%s.rule=Host(`%s.localhost`)', $slug, $domain),
         ];
     }
 

@@ -1,6 +1,7 @@
 networks:
   yacht:
     name: yacht-proxy
+    external: true
 
 services:
   traefik:
@@ -8,7 +9,9 @@ services:
     container_name: yacht-traefik
     command:
       - '--api.insecure=true'
+      - '--accesslog=true'
       - '--providers.docker'
+      - '--providers.docker.network=yacht-proxy'
     networks:
       - yacht
     ports:
