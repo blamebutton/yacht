@@ -8,7 +8,7 @@
     "traefik"
   ],
   "homepage": "https://github.com/blamebutton/yacht",
-  "type": "project",
+  "type": "library",
   "license": "MIT",
   "bin": "bin/yacht",
   "authors": [
