@@ -65,6 +65,11 @@ if [[ $# -gt 0 ]]; then
       exit 1
     fi
 
+    if ! [[ -f "${ADD_DIR}/docker-compose.yml" ]]; then
+      log_error "file \"docker-compose.yml\" not found. Run \"php artisan sail:install\" to generate one."
+      exit 1
+    fi
+
     ARTISAN="${ADD_DIR}/artisan"
     APP_VERSION="$(php "${ARTISAN}" --version)"
 
